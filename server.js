@@ -33,4 +33,3 @@ mongoose.connect(connectionString)
   .catch(err => {
     console.error('❌ MongoDB connection error:', err);
   });
-
