@@ -1,0 +1,71 @@
+const express = require("express");
+const router = express.Router();
+const Note = require("../models/Note");
+
+// 🔹 GET: tutte le note per userId
+router.get("/list/:userId", async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    const notes = await Note.find({ userId });
+    res.json(notes);
+  } catch (err) {
+    res.status(500).json({ error: "Errore durante il recupero delle note" });
+  }
+});
+
+// 🔹 POST: crea una nuova nota
+router.post("/add", async (req, res) => {
+  try {
+    const { id, userId, title, content } = req.body;
+
+    const newNote = new Note({
+      id,
+      userId,
+      title,
+      content,
+    });
+
+    await newNote.save();
+
+    res.send(`✅ New note created with ID ${id}`);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// 🔹 PUT: aggiorna una nota
+router.put("/update", async (req, res) => {
+  try {
+    const updatedNote = await Note.findOneAndUpdate(
+      { id: req.body.id },
+      {
+        title: req.body.title,
+        content: req.body.content,
+      },
+      { new: true }
+    );
+
+    res.json({
+      message: `📝 Nota aggiornata con ID ${req.body.id}`,
+      note: updatedNote,
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Errore durante l'aggiornamento", error });
+  }
+});
+
+// 🔹 DELETE: elimina una nota
+router.delete("/delete", async (req, res) => {
+  try {
+    const result = await Note.deleteOne({ id: req.body.id });
+
+    res.json({
+      message: `🗑️ Nota eliminata con ID ${req.body.id}`,
+      result,
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Errore durante l'eliminazione", error });
+  }
+});
+
+module.exports = router;
