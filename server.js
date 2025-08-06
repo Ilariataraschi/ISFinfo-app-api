@@ -5,6 +5,9 @@ const mongoose = require('mongoose');
 
 const app = express();
 const PORT = process.env.PORT || 3000; // Usa porta dinamica per Render
+app.listen(PORT, () => {
+  console.log(`🚀 Server running on port ${PORT}`);
+});
 
 // Middleware per JSON
 app.use(express.json());
